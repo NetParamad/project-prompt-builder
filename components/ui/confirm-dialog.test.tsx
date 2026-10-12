@@ -45,14 +45,15 @@ describe("ConfirmDialog", () => {
     await user.click(screen.getByRole("button", { name: "Cancel" }));
     expect(onClose).toHaveBeenCalledTimes(1);
   });
-
-  it("closes on Escape and backdrop click", async () => {    const user = userEvent.setup();
+  it("closes on Escape and backdrop click", async () => {
+    const user = userEvent.setup();
     const onClose = vi.fn();
-    const { container } = openDialog({ onClose });
+    openDialog({ onClose });
 
     await user.keyboard("{Escape}");
     expect(onClose).toHaveBeenCalledTimes(1);
-    const backdrop = container.querySelector('[aria-hidden="true"]');
+    // Portal renders into document.body, outside the RTL container.
+    const backdrop = document.body.querySelector('[aria-hidden="true"]');
     if (!backdrop) throw new Error("backdrop missing");
     await user.click(backdrop);
     expect(onClose).toHaveBeenCalledTimes(2);
