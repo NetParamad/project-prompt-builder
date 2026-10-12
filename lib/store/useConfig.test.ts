@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { parseCustomSkills } from "@/lib/domain";
+import { EMPTY_REQUIREMENTS, parseCustomSkills } from "@/lib/domain";
 import { useConfig } from "@/lib/store/useConfig";
 
 beforeEach(() => {
@@ -91,5 +91,22 @@ describe("custom skills", () => {
       "tdd",
       "code-review",
     ]);
+  });
+
+  it("applySharedConfig replaces state and clears manual edits", () => {
+    const s = useConfig.getState();
+    s.setManualEdit("old edit");
+    s.applySharedConfig({
+      selections: { frontend: ["react"] },
+      requirements: { ...EMPTY_REQUIREMENTS, projectName: "Shared" },
+      mode: "basic",
+      customSkillsRaw: "x",
+    });
+    const after = useConfig.getState();
+    expect(after.selections).toEqual({ frontend: ["react"] });
+    expect(after.requirements.projectName).toBe("Shared");
+    expect(after.mode).toBe("basic");
+    expect(after.customSkillsRaw).toBe("x");
+    expect(after.manualEdit).toBeNull();
   });
 });

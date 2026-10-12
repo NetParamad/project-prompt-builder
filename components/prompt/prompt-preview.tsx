@@ -4,6 +4,7 @@ import * as React from "react";
 import { copyText } from "@/lib/export/clipboard";
 import { downloadFile, slugify } from "@/lib/export/files";
 import { parseCustomSkills } from "@/lib/domain";
+import { encodeShareConfig } from "@/lib/share/codec";
 import { useGeneratedPrompt, wordCount } from "@/lib/prompt/useGeneratedPrompt";
 import { useConfig } from "@/lib/store/useConfig";
 import { evaluateRules } from "@/lib/compat/rules";
@@ -20,6 +21,7 @@ export function PromptPreview() {
   const clearAll = useConfig((s) => s.clearAll);
 
   const [copied, setCopied] = React.useState(false);
+  const [shared, setShared] = React.useState(false);
   const [editing, setEditing] = React.useState(false);
   const [draft, setDraft] = React.useState("");
 
@@ -34,6 +36,19 @@ export function PromptPreview() {
   async function handleCopy() {
     setCopied(await copyText(markdown));
     window.setTimeout(() => setCopied(false), 2000);
+  }
+
+  async function handleShare() {
+    const state = useConfig.getState();
+    const param = encodeShareConfig({
+      selections: state.selections,
+      requirements: state.requirements,
+      mode: state.mode,
+      customSkillsRaw: state.customSkillsRaw,
+    });
+    const url = `${window.location.origin}${window.location.pathname}?c=${param}`;
+    setShared(await copyText(url));
+    window.setTimeout(() => setShared(false), 2000);
   }
 
   function handleClear() {
@@ -146,6 +161,9 @@ export function PromptPreview() {
         </Button>
         <Button size="sm" variant="ghost" onClick={exportJson}>
           Export .json
+        </Button>
+        <Button size="sm" variant="ghost" onClick={handleShare}>
+          {shared ? "Link copied!" : "Copy share link"}
         </Button>
       </div>
     </div>

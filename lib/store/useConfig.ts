@@ -10,6 +10,7 @@ import {
   type PromptMode,
   type RequirementKey,
 } from "@/lib/domain";
+import type { SharedConfig } from "@/lib/share/codec";
 
 export type ToggleResult = "selected" | "deselected" | "capped" | "ignored";
 
@@ -24,6 +25,7 @@ interface ConfigState {
   setMode: (mode: PromptMode) => void;
   setCustomSkillsRaw: (value: string) => void;
   applyPreset: (preset: Preset) => void;
+  applySharedConfig: (config: SharedConfig) => void;
   setManualEdit: (text: string) => void;
   clearManualEdit: () => void;
   clearAll: () => void;
@@ -108,6 +110,15 @@ export const useConfig = create<ConfigState>()(
 
       setManualEdit: (text) => set({ manualEdit: text }),
       clearManualEdit: () => set({ manualEdit: null }),
+
+      applySharedConfig: (config) =>
+        set({
+          selections: { ...config.selections },
+          requirements: { ...config.requirements },
+          mode: config.mode,
+          customSkillsRaw: config.customSkillsRaw,
+          manualEdit: null,
+        }),
 
       clearAll: () =>
         set({

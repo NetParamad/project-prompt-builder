@@ -42,3 +42,7 @@ _Avoid_: Plugin, tool
 **Custom Skill**:
 A free-text skill name typed by the user (one per line). Merged with picked Agent Skills in the prompt.
 _Avoid_: Manual skill
+
+**Share Link**:
+A URL with `?c=` holding the full Configuration as base64url JSON. Opening it applies the Configuration, winning over stored state.
+_Avoid_: Share URL, deep link

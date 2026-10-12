@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Configurator } from "@/components/configurator/configurator";
 import { PromptPreview } from "@/components/prompt/prompt-preview";
+import { SharedConfigLoader } from "@/components/shared-config-loader";
 import { copyText } from "@/lib/export/clipboard";
 import { useGeneratedPrompt } from "@/lib/prompt/useGeneratedPrompt";
 import { evaluateRules } from "@/lib/compat/rules";
@@ -31,6 +32,7 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen flex-col bg-zinc-50 font-sans text-zinc-900 dark:bg-zinc-950 dark:text-zinc-50">
+      <SharedConfigLoader />
       <header className="sticky top-0 z-10 border-b border-zinc-200 bg-white/80 backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/80">
         <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-4">
           <div className="flex items-center gap-2">
