@@ -63,10 +63,49 @@ describe("evaluateRules", () => {
     ).not.toContain("mq-no-home");
   });
 
-  it("returns nothing for a clean config", () => {    expect(
+  it("warns on express/nestjs without the node runtime", () => {
+    expect(ids({ backend: ["go", "express"] })).toContain("express-no-node");
+    expect(ids({ backend: ["go", "express"] })).toContain("mixed-runtimes");
+    expect(ids({ backend: ["nodejs", "express"] })).not.toContain(
+      "express-no-node",
+    );
+    expect(ids({ backend: ["nestjs"] })).toContain("nestjs-no-node");
+    expect(ids({ backend: ["nodejs", "nestjs"] })).not.toContain(
+      "nestjs-no-node",
+    );
+  });
+
+  it("warns when backend and language runtimes disagree", () => {
+    expect(
+      ids({ backend: ["laravel"], language: ["typescript"] }),
+    ).toContain("laravel-no-php");
+    expect(ids({ backend: ["laravel"], language: ["php"] })).not.toContain(
+      "laravel-no-php",
+    );
+    expect(ids({ backend: ["laravel"] })).not.toContain("laravel-no-php");
+    expect(ids({ backend: ["dotnet"], language: ["go-lang"] })).toContain(
+      "dotnet-no-csharp",
+    );
+    expect(ids({ backend: ["dotnet"], language: ["csharp"] })).not.toContain(
+      "dotnet-no-csharp",
+    );
+  });
+
+  it("warns on prisma without any node runtime", () => {
+    expect(ids({ orm: ["prisma"], backend: ["go"] })).toContain(
+      "ts-orm-no-runtime",
+    );
+    expect(
+      ids({ orm: ["prisma"], backend: ["go"], frontend: ["nextjs"] }),
+    ).not.toContain("ts-orm-no-runtime");
+    expect(ids({ orm: ["prisma"] })).not.toContain("ts-orm-no-runtime");
+  });
+  it("returns nothing for a clean config", () => {
+    expect(
       evaluateRules({
         frontend: ["nextjs"],
-        backend: ["nestjs"],
+        backend: ["nodejs", "nestjs"],
+        language: ["typescript"],
         database: ["postgresql"],
         orm: ["prisma"],
         deployment: ["docker"],

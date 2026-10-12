@@ -35,8 +35,16 @@ export function stackIntel(sel: Selections): string[] {
     );
   }
 
-  if (auth === "supabase-auth" && !has(sel, "database", "postgresql")) {
+  if (
+    hasAny(sel, "backend", ["express", "nestjs"]) &&
+    !has(sel, "backend", "nodejs")
+  ) {
     notes.push(
+      "Express/NestJS run on the Node.js runtime — include Node.js in the backend and keep one lockfile and one process model for the whole service.",
+    );
+  }
+
+  if (auth === "supabase-auth" && !has(sel, "database", "postgresql")) {    notes.push(
       "Supabase Auth ships with Postgres — prefer PostgreSQL as the database unless you have a reason to run auth and data on different stores.",
     );
   }

@@ -100,4 +100,9 @@ describe("buildPrompt", () => {
     expect(md).toContain("- Cache: Redis");
     expect(md).toContain("k6");
   });
+
+  it("notes the node runtime when express stands alone", () => {
+    const md = buildPrompt(config({ backend: ["express"] }));
+    expect(md).toContain("Node.js runtime");
+  });
 });

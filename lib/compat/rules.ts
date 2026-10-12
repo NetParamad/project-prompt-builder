@@ -118,6 +118,80 @@ const RULES: Rule[] = [
       involved: ["message-queue", "deployment"],
     }),
   },
+  {
+    id: "express-no-node",
+    when: (sel) =>
+      has(sel, "backend", "express") && !has(sel, "backend", "nodejs"),
+    issue: () => ({
+      level: "warn",
+      message: "Express runs on the Node.js runtime, which is not selected.",
+      hint: "Add Node.js to Backend — or drop Express if the API is Go/PHP/.NET.",
+      involved: ["backend"],
+    }),
+  },
+  {
+    id: "nestjs-no-node",
+    when: (sel) =>
+      has(sel, "backend", "nestjs") && !has(sel, "backend", "nodejs"),
+    issue: () => ({
+      level: "warn",
+      message: "NestJS runs on the Node.js runtime, which is not selected.",
+      hint: "Add Node.js to Backend — or drop NestJS if the API is Go/PHP/.NET.",
+      involved: ["backend"],
+    }),
+  },
+  {
+    id: "laravel-no-php",
+    when: (sel) =>
+      has(sel, "backend", "laravel") &&
+      (sel["language"]?.length ?? 0) > 0 &&
+      !has(sel, "language", "php"),
+    issue: () => ({
+      level: "warn",
+      message: "Laravel is PHP, but the Language is not PHP.",
+      hint: "Set Language to PHP — or drop Laravel for a backend matching the language.",
+      involved: ["backend", "language"],
+    }),
+  },
+  {
+    id: "dotnet-no-csharp",
+    when: (sel) =>
+      has(sel, "backend", "dotnet") &&
+      (sel["language"]?.length ?? 0) > 0 &&
+      !has(sel, "language", "csharp"),
+    issue: () => ({
+      level: "warn",
+      message: ".NET is C#, but the Language is not C#.",
+      hint: "Set Language to C# — or drop .NET for a backend matching the language.",
+      involved: ["backend", "language"],
+    }),
+  },
+  {
+    id: "ts-orm-no-runtime",
+    when: (sel) =>
+      hasAny(sel, "orm", ["prisma", "drizzle"]) &&
+      (sel["backend"]?.length ?? 0) > 0 &&
+      !hasAny(sel, "backend", NODE_BACKENDS) &&
+      !hasAny(sel, "frontend", ["nextjs", "nuxt", "sveltekit"]),
+    issue: () => ({
+      level: "warn",
+      message: "Prisma/Drizzle need a Node.js runtime, which is nowhere in the stack.",
+      hint: "Add a Node backend (or a Next.js/Nuxt layer) — or switch to a backend-native tool like sqlc/GORM.",
+      involved: ["orm", "backend", "frontend"],
+    }),
+  },
+  {
+    id: "mixed-runtimes",
+    when: (sel) =>
+      hasAny(sel, "backend", NON_NODE_BACKENDS) &&
+      hasAny(sel, "backend", NODE_BACKENDS),
+    issue: () => ({
+      level: "warn",
+      message: "Go/PHP/.NET mixed with Node in one Backend — that is two services, not one.",
+      hint: "Run each runtime as its own service behind a versioned API contract; share nothing except the contract.",
+      involved: ["backend"],
+    }),
+  },
 ];
 
 /** Evaluates every rule against the selections. Warn-only; never throws. */
