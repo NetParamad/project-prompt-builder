@@ -106,6 +106,18 @@ const RULES: Rule[] = [
       involved: ["deployment"],
     }),
   },
+  {
+    id: "mq-no-home",
+    when: (sel) =>
+      (sel["message-queue"]?.length ?? 0) > 0 &&
+      !hasAny(sel, "deployment", ["docker", "kubernetes", "vps"]),
+    issue: () => ({
+      level: "info",
+      message: "A message queue is selected but nowhere to run it.",
+      hint: "Add Docker, Kubernetes, or a VPS to host the broker — or switch to a managed queue.",
+      involved: ["message-queue", "deployment"],
+    }),
+  },
 ];
 
 /** Evaluates every rule against the selections. Warn-only; never throws. */

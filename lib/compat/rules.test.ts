@@ -56,8 +56,14 @@ describe("evaluateRules", () => {
     ).not.toContain("k8s-no-docker");
   });
 
-  it("returns nothing for a clean config", () => {
+  it("infos a queue with nowhere to run", () => {
+    expect(ids({ "message-queue": ["kafka"] })).toContain("mq-no-home");
     expect(
+      ids({ "message-queue": ["kafka"], deployment: ["docker"] }),
+    ).not.toContain("mq-no-home");
+  });
+
+  it("returns nothing for a clean config", () => {    expect(
       evaluateRules({
         frontend: ["nextjs"],
         backend: ["nestjs"],

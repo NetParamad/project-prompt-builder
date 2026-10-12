@@ -87,4 +87,17 @@ describe("buildPrompt", () => {
     expect(md).toContain("/my-skill");
     expect(md.match(/\/tdd/g)?.length).toBe(1);
   });
+
+  it("lists infra categories in the stack and mentions load tools", () => {
+    const sel = {
+      ...NEXT_GO,
+      "message-queue": ["kafka"],
+      cache: ["redis"],
+      "load-testing": ["k6"],
+    };
+    const md = buildPrompt(config(sel, "production"));
+    expect(md).toContain("- Message Queue: Kafka");
+    expect(md).toContain("- Cache: Redis");
+    expect(md).toContain("k6");
+  });
 });

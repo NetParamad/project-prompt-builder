@@ -53,6 +53,7 @@ export function buildPrompt(config: ProjectConfiguration): string {
     (c) => c.id !== "project-type" && c.id !== "ai-skills",
   ).map((c) => `- ${c.title}: ${picked(sel, c.id)}`);
   const intel = stackIntel(sel);
+  const loadTools = picked(sel, "load-testing");
   parts.push(
     "",
     section(
@@ -132,7 +133,14 @@ export function buildPrompt(config: ProjectConfiguration): string {
       "",
       section(
         "Testing",
-        `- Cover business logic with unit tests (${picked(sel, "testing")}).\n- Add at least one end-to-end happy path for the core user flow.\n- Tests must pass before declaring the work done.`,
+        [
+          `- Cover business logic with unit tests (${picked(sel, "testing")}).`,
+          "- Add at least one end-to-end happy path for the core user flow.",
+          ...(loadTools === "—"
+            ? []
+            : [`- Load-test critical paths with ${loadTools}; gate releases on the budgets.`]),
+          "- Tests must pass before declaring the work done.",
+        ].join("\n"),
       ),
       "",
       section(
@@ -167,7 +175,13 @@ export function buildPrompt(config: ProjectConfiguration): string {
       "",
       section(
         "Performance & Scalability",
-        "- Avoid N+1 queries; paginate every list; index foreign keys and hot filters.\n- Cache read-heavy data with explicit invalidation; set timeouts on all outbound calls.",
+        [
+          "- Avoid N+1 queries; paginate every list; index foreign keys and hot filters.",
+          "- Cache read-heavy data with explicit invalidation; set timeouts on all outbound calls.",
+          ...(loadTools === "—"
+            ? []
+            : [`- Prove budgets with ${loadTools} before scaling out.`]),
+        ].join("\n"),
       ),
     );
   }

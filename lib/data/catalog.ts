@@ -91,6 +91,28 @@ export const CATEGORIES: Category[] = [
     ],
   },
   {
+    id: "message-queue",
+    title: "Message Queue",
+    selection: "multiple",
+    options: [
+      opt("message-queue", "kafka", "Kafka", "Distributed event streaming"),
+      opt("message-queue", "rabbitmq", "RabbitMQ", "Classic message broker"),
+      opt("message-queue", "nats", "NATS", "Lightweight messaging"),
+      opt("message-queue", "sqs", "AWS SQS", "Managed cloud queue"),
+      opt("message-queue", "pulsar", "Pulsar", "Multi-tenant streaming"),
+    ],
+  },
+  {
+    id: "cache",
+    title: "Cache",
+    selection: "single",
+    options: [
+      opt("cache", "redis", "Redis", "In-memory data store"),
+      opt("cache", "valkey", "Valkey", "Open-source Redis fork"),
+      opt("cache", "memcached", "Memcached", "Simple object cache"),
+    ],
+  },
+  {
     id: "auth",
     title: "Authentication",
     selection: "single",
@@ -157,6 +179,18 @@ export const CATEGORIES: Category[] = [
     ],
   },
   {
+    id: "load-testing",
+    title: "Load Testing",
+    selection: "multiple",
+    options: [
+      opt("load-testing", "k6", "k6", "JS-scripted load tests"),
+      opt("load-testing", "artillery", "Artillery", "Node load testing"),
+      opt("load-testing", "locust", "Locust", "Python swarm testing"),
+      opt("load-testing", "jmeter", "JMeter", "Classic Java load tool"),
+      opt("load-testing", "gatling", "Gatling", "Scala-based load tests"),
+    ],
+  },
+  {
     id: "deployment",
     title: "Deployment",
     selection: "multiple",
@@ -166,6 +200,31 @@ export const CATEGORIES: Category[] = [
       opt("deployment", "vps", "VPS", "Single VM host"),
       opt("deployment", "cloudflare", "Cloudflare", "Edge + Workers/Pages"),
       opt("deployment", "kubernetes", "Kubernetes", "Orchestrated containers"),
+    ],
+  },
+  {
+    id: "cicd",
+    title: "CI/CD",
+    selection: "multiple",
+    options: [
+      opt("cicd", "github-actions", "GitHub Actions", "Native GitHub automation"),
+      opt("cicd", "gitlab-ci", "GitLab CI", "Integrated GitLab pipelines"),
+      opt("cicd", "jenkins", "Jenkins", "Self-hosted classic"),
+      opt("cicd", "argocd", "ArgoCD", "GitOps for Kubernetes"),
+      opt("cicd", "circleci", "CircleCI", "Cloud CI pipelines"),
+    ],
+  },
+  {
+    id: "observability",
+    title: "Observability",
+    selection: "multiple",
+    options: [
+      opt("observability", "prometheus", "Prometheus", "Metrics + alerting"),
+      opt("observability", "grafana", "Grafana", "Dashboards"),
+      opt("observability", "opentelemetry", "OpenTelemetry", "Vendor-neutral traces"),
+      opt("observability", "loki", "Loki", "Log aggregation"),
+      opt("observability", "jaeger", "Jaeger", "Distributed tracing"),
+      opt("observability", "datadog", "Datadog", "Hosted all-in-one"),
     ],
   },
   {
