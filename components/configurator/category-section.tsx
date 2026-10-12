@@ -31,6 +31,7 @@ export function CategorySection({ category, selected, capped, onToggle }: Catego
         {category.options.map((option) => (
           <OptionCard
             key={option.id}
+            id={option.id}
             name={option.name}
             description={option.description}
             selected={selected.includes(option.id)}

@@ -1,16 +1,61 @@
 "use client";
 
+import * as React from "react";
 import { Check } from "lucide-react";
+import Image from "next/image";
+import { LOGO_DARK_VARIANTS, LOGO_TITLES } from "@/lib/data/logos";
 import { cn } from "@/lib/utils";
 
 interface OptionCardProps {
+  id: string;
   name: string;
   description?: string;
   selected: boolean;
   onToggle: () => void;
 }
 
-export function OptionCard({ name, description, selected, onToggle }: OptionCardProps) {
+function OptionLogo({ id, name }: { id: string; name: string }) {
+  const [failed, setFailed] = React.useState(false);
+  const hasLogo = !failed && id in LOGO_TITLES;
+  const hasDark = LOGO_DARK_VARIANTS.has(id);
+
+  if (!hasLogo) {
+    return (
+      <span
+        aria-hidden="true"
+        className="flex size-5 shrink-0 items-center justify-center rounded bg-zinc-200 text-[11px] font-bold text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300"
+      >
+        {name.charAt(0).toUpperCase()}
+      </span>
+    );
+  }
+  return (
+    <span aria-hidden="true" className="relative block size-5 shrink-0">
+      <Image
+        src={`/logos/${id}.svg`}
+        alt=""
+        loading="lazy"
+        width={20}
+        height={20}
+        onError={() => setFailed(true)}
+        className={cn("size-5", hasDark && "dark:hidden")}
+      />
+      {hasDark && (
+        <Image
+          src={`/logos/${id}-dark.svg`}
+          alt=""
+          loading="lazy"
+          width={20}
+          height={20}
+          onError={() => setFailed(true)}
+          className="hidden size-5 dark:block"
+        />
+      )}
+    </span>
+  );
+}
+
+export function OptionCard({ id, name, description, selected, onToggle }: OptionCardProps) {
   return (
     <button
       type="button"
@@ -25,7 +70,10 @@ export function OptionCard({ name, description, selected, onToggle }: OptionCard
       )}
     >
       <span className="flex w-full items-center justify-between gap-2 font-medium">
-        {name}
+        <span className="flex min-w-0 items-center gap-2">
+          <OptionLogo id={id} name={name} />
+          <span className="truncate">{name}</span>
+        </span>
         {selected && <Check aria-label="selected" className="animate-check-in" />}
       </span>
       {description && (

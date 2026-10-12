@@ -39,3 +39,7 @@ npm run build
 ```
 
 Deployable to Vercel as-is (no backend, no database).
+
+## Credits
+
+Technology logos vendored from [svgl.app](https://svgl.app) (`npm run fetch-logos` refreshes them).
