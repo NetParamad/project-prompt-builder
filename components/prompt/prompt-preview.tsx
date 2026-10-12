@@ -9,8 +9,11 @@ import { useGeneratedPrompt, wordCount } from "@/lib/prompt/useGeneratedPrompt";
 import { useConfig } from "@/lib/store/useConfig";
 import { evaluateRules } from "@/lib/compat/rules";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { ModeSwitch } from "@/components/prompt/mode-switch";
 import { ValidationList } from "@/components/prompt/validation-list";
+
+type PendingAction = "clear" | "regenerate" | null;
 
 export function PromptPreview() {
   const markdown = useGeneratedPrompt();
@@ -24,6 +27,7 @@ export function PromptPreview() {
   const [shared, setShared] = React.useState(false);
   const [editing, setEditing] = React.useState(false);
   const [draft, setDraft] = React.useState("");
+  const [pendingAction, setPendingAction] = React.useState<PendingAction>(null);
 
   const issues = React.useMemo(() => evaluateRules(selections), [selections]);
   const edited = manualEdit !== null;
@@ -52,16 +56,41 @@ export function PromptPreview() {
   }
 
   function handleClear() {
-    if (window.confirm("Clear the entire configuration?")) clearAll();
+    setPendingAction("clear");
   }
 
   function handleRegenerate() {
-    if (edited && !window.confirm("Discard your manual edits and rebuild?")) {
+    if (edited) {
+      setPendingAction("regenerate");
       return;
     }
     clearManualEdit();
     setEditing(false);
   }
+
+  function handleDialogConfirm() {
+    if (pendingAction === "clear") clearAll();
+    else if (pendingAction === "regenerate") {
+      clearManualEdit();
+      setEditing(false);
+    }
+    setPendingAction(null);
+  }
+
+  const dialogCopy =
+    pendingAction === "regenerate"
+      ? {
+          title: "Discard manual edits?",
+          description:
+            "Rebuild the prompt from the current configuration? Your manual edits will be lost.",
+          confirmLabel: "Regenerate",
+        }
+      : {
+          title: "Clear configuration?",
+          description:
+            "This removes all selections, requirements, and edits. This cannot be undone.",
+          confirmLabel: "Clear everything",
+        };
 
   function exportMarkdown() {
     const name = useConfig.getState().requirements.projectName;
@@ -166,6 +195,14 @@ export function PromptPreview() {
           {shared ? "Link copied!" : "Copy share link"}
         </Button>
       </div>
+      <ConfirmDialog
+        open={pendingAction !== null}
+        title={dialogCopy.title}
+        description={dialogCopy.description}
+        confirmLabel={dialogCopy.confirmLabel}
+        onConfirm={handleDialogConfirm}
+        onClose={() => setPendingAction(null)}
+      />
     </div>
   );
 }

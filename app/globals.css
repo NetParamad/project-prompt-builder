@@ -70,6 +70,17 @@ body {
   }
 }
 
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .animate-card-pop {
   animation: card-pop 160ms ease-out;
 }
@@ -82,10 +93,15 @@ body {
   animation: pane-in 200ms ease-out;
 }
 
+.animate-dialog-in {
+  animation: dialog-in 160ms ease-out;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-card-pop,
   .animate-check-in,
-  .animate-pane-in {
+  .animate-pane-in,
+  .animate-dialog-in {
     animation: none;
   }
 }
