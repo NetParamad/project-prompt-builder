@@ -84,19 +84,22 @@ export function PromptPreview() {
             </Button>
           </>
         ) : (
-          <Button className="w-full" size="sm" variant="outline" onClick={startEditing}>
-            Edit manually
-          </Button>
+          <>
+            <Button className="w-full" size="sm" onClick={handleCopy}>
+              {copied ? "Copied!" : "Copy to clipboard"}
+            </Button>
+            <Button className="w-full" size="sm" variant="outline" onClick={startEditing}>
+              Edit manually
+            </Button>
+            {edited && (
+              <Button className="w-full" size="sm" variant="outline" onClick={clearManualEdit}>
+                Reset edits
+              </Button>
+            )}
+          </>
         )}
-        {edited && !editing && (
-          <Button className="w-full" size="sm" variant="outline" onClick={clearManualEdit}>
-            Reset edits
-          </Button>
-        )}
-        <Button className="w-full" size="sm" onClick={handleCopy}>
-          {copied ? "Copied!" : "Copy to clipboard"}
-        </Button>
-        <Button className="w-full" size="sm" variant="outline" onClick={() => setConfirmingClear(true)}>
+        <div aria-hidden="true" className="border-t border-zinc-200 dark:border-zinc-800" />
+        <Button className="w-full" size="sm" variant="destructive" onClick={() => setConfirmingClear(true)}>
           Clear
         </Button>
       </div>
