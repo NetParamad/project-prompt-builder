@@ -121,15 +121,3 @@ export function decodeShareConfig(param: string): SharedConfig | null {
     return null;
   }
 }
-
-/**
- * Parses an imported JSON file (our export shape or a bare config).
- * Returns null when the file is unusable, so callers can show an error.
- */
-export function parseImportJson(text: string): SharedConfig | null {
-  try {
-    return sanitizeSharedConfig(JSON.parse(text));
-  } catch {
-    return null;
-  }
-}
