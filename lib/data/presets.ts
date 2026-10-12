@@ -136,7 +136,7 @@ export const PRESETS: Preset[] = [
     config: {
       "project-type": ["ecommerce"],
       frontend: ["nextjs"],
-      backend: ["nestjs"],
+      backend: ["nodejs", "nestjs"],
       language: ["typescript"],
       database: ["postgresql"],
       orm: ["prisma"],
