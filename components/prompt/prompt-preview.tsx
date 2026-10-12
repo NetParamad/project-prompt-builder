@@ -4,7 +4,8 @@ import * as React from "react";
 import { copyText } from "@/lib/export/clipboard";
 import { downloadFile, slugify } from "@/lib/export/files";
 import { parseCustomSkills } from "@/lib/domain";
-import { encodeShareConfig } from "@/lib/share/codec";
+import { encodeShareConfig, parseImportJson } from "@/lib/share/codec";
+import type { SharedConfig } from "@/lib/share/codec";
 import { useGeneratedPrompt, wordCount } from "@/lib/prompt/useGeneratedPrompt";
 import { useConfig } from "@/lib/store/useConfig";
 import { evaluateRules } from "@/lib/compat/rules";
@@ -13,7 +14,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { ModeSwitch } from "@/components/prompt/mode-switch";
 import { ValidationList } from "@/components/prompt/validation-list";
 
-type PendingAction = "clear" | "regenerate" | null;
+type PendingAction = "clear" | "regenerate" | "import" | null;
 
 export function PromptPreview() {
   const markdown = useGeneratedPrompt();
@@ -22,12 +23,16 @@ export function PromptPreview() {
   const setManualEdit = useConfig((s) => s.setManualEdit);
   const clearManualEdit = useConfig((s) => s.clearManualEdit);
   const clearAll = useConfig((s) => s.clearAll);
+  const applySharedConfig = useConfig((s) => s.applySharedConfig);
 
   const [copied, setCopied] = React.useState(false);
   const [shared, setShared] = React.useState(false);
   const [editing, setEditing] = React.useState(false);
   const [draft, setDraft] = React.useState("");
   const [pendingAction, setPendingAction] = React.useState<PendingAction>(null);
+  const [pendingImport, setPendingImport] = React.useState<SharedConfig | null>(null);
+  const [importError, setImportError] = React.useState<string | null>(null);
+  const fileRef = React.useRef<HTMLInputElement>(null);
 
   const issues = React.useMemo(() => evaluateRules(selections), [selections]);
   const edited = manualEdit !== null;
@@ -73,8 +78,28 @@ export function PromptPreview() {
     else if (pendingAction === "regenerate") {
       clearManualEdit();
       setEditing(false);
+    } else if (pendingAction === "import" && pendingImport) {
+      applySharedConfig(pendingImport);
+      setEditing(false);
     }
     setPendingAction(null);
+    setPendingImport(null);
+  }
+
+  async function handleImportFile(file: File) {
+    const parsed = parseImportJson(await file.text());
+    if (!parsed) {
+      setImportError("Could not read that file — expected a prompt-builder JSON export.");
+      return;
+    }
+    setImportError(null);
+    if (edited) {
+      setPendingImport(parsed);
+      setPendingAction("import");
+      return;
+    }
+    applySharedConfig(parsed);
+    setEditing(false);
   }
 
   const dialogCopy =
@@ -85,12 +110,19 @@ export function PromptPreview() {
             "Rebuild the prompt from the current configuration? Your manual edits will be lost.",
           confirmLabel: "Regenerate",
         }
-      : {
-          title: "Clear configuration?",
-          description:
-            "This removes all selections, requirements, and edits. This cannot be undone.",
-          confirmLabel: "Clear everything",
-        };
+      : pendingAction === "import"
+        ? {
+            title: "Replace configuration?",
+            description:
+              "Importing replaces all selections, requirements, and manual edits. This cannot be undone.",
+            confirmLabel: "Import",
+          }
+        : {
+            title: "Clear configuration?",
+            description:
+              "This removes all selections, requirements, and edits. This cannot be undone.",
+            confirmLabel: "Clear everything",
+          };
 
   function exportMarkdown() {
     const name = useConfig.getState().requirements.projectName;
@@ -191,10 +223,30 @@ export function PromptPreview() {
         <Button size="sm" variant="ghost" onClick={exportJson}>
           Export .json
         </Button>
+        <Button size="sm" variant="ghost" onClick={() => fileRef.current?.click()}>
+          Import .json
+        </Button>
+        <input
+          ref={fileRef}
+          type="file"
+          accept="application/json,.json"
+          aria-label="Import JSON file"
+          className="sr-only"
+          onChange={(event) => {
+            const file = event.target.files?.[0];
+            event.target.value = "";
+            if (file) void handleImportFile(file);
+          }}
+        />
         <Button size="sm" variant="ghost" onClick={handleShare}>
           {shared ? "Link copied!" : "Copy share link"}
         </Button>
       </div>
+      {importError && (
+        <p role="alert" className="text-xs text-red-600 dark:text-red-400">
+          {importError}
+        </p>
+      )}
       <ConfirmDialog
         open={pendingAction !== null}
         title={dialogCopy.title}

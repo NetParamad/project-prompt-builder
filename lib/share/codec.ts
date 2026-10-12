@@ -61,6 +61,42 @@ function sanitizeRequirements(raw: unknown): ProjectRequirements {
   return out;
 }
 
+function sanitizeCustomSkills(raw: unknown): string {
+  if (typeof raw === "string") return raw;
+  if (Array.isArray(raw)) {
+    return raw.filter((v): v is string => typeof v === "string").join("\n");
+  }
+  return "";
+}
+
+/**
+ * Validates an unknown value into a SharedConfig. Accepts both our export
+ * shape (`{ configuration: {...}, ... }`) and bare configs. Returns null
+ * when there is nothing usable.
+ */
+export function sanitizeSharedConfig(raw: unknown): SharedConfig | null {
+  if (typeof raw !== "object" || raw === null || Array.isArray(raw)) {
+    return null;
+  }
+  const record = raw as Record<string, unknown>;
+  const inner =
+    typeof record["configuration"] === "object" &&
+    record["configuration"] !== null &&
+    !Array.isArray(record["configuration"])
+      ? (record["configuration"] as Record<string, unknown>)
+      : record;
+  const mode: PromptMode = MODES.includes(inner["mode"] as PromptMode)
+    ? (inner["mode"] as PromptMode)
+    : "standard";
+  return {
+    selections: sanitizeSelections(inner["selections"]),
+    requirements: sanitizeRequirements(inner["requirements"]),
+    mode,
+    customSkillsRaw: sanitizeCustomSkills(
+      inner["customSkillsRaw"] ?? inner["customSkills"],
+    ),
+  };
+}
 /** Encodes a Configuration into a URL-safe `?c=` param. */
 export function encodeShareConfig(input: SharedConfig): string {
   return toBase64Url(
@@ -80,23 +116,19 @@ export function encodeShareConfig(input: SharedConfig): string {
 export function decodeShareConfig(param: string): SharedConfig | null {
   if (!param) return null;
   try {
-    const parsed: unknown = JSON.parse(fromBase64Url(param));
-    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
-      return null;
-    }
-    const record = parsed as Record<string, unknown>;
-    const mode: PromptMode = MODES.includes(record["mode"] as PromptMode)
-      ? (record["mode"] as PromptMode)
-      : "standard";
-    return {
-      selections: sanitizeSelections(record["selections"]),
-      requirements: sanitizeRequirements(record["requirements"]),
-      mode,
-      customSkillsRaw:
-        typeof record["customSkillsRaw"] === "string"
-          ? record["customSkillsRaw"]
-          : "",
-    };
+    return sanitizeSharedConfig(JSON.parse(fromBase64Url(param)));
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Parses an imported JSON file (our export shape or a bare config).
+ * Returns null when the file is unusable, so callers can show an error.
+ */
+export function parseImportJson(text: string): SharedConfig | null {
+  try {
+    return sanitizeSharedConfig(JSON.parse(text));
   } catch {
     return null;
   }

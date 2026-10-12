@@ -3,6 +3,7 @@ import { EMPTY_REQUIREMENTS } from "@/lib/domain";
 import {
   decodeShareConfig,
   encodeShareConfig,
+  parseImportJson,
 } from "@/lib/share/codec";
 
 const FULL = {
@@ -65,5 +66,40 @@ describe("share codec", () => {
       mode: "standard",
       customSkillsRaw: "",
     });
+  });
+
+  it("parses our export shape, restoring custom skills from the array", () => {
+    const parsed = parseImportJson(
+      JSON.stringify({
+        configuration: {
+          selections: { frontend: ["react"] },
+          requirements: { ...EMPTY_REQUIREMENTS, projectName: "Imp" },
+          mode: "basic",
+          customSkills: ["a-skill", "b-skill"],
+        },
+        markdown: "# ...",
+        warnings: [],
+      }),
+    );
+    expect(parsed).toEqual({
+      selections: { frontend: ["react"] },
+      requirements: { ...EMPTY_REQUIREMENTS, projectName: "Imp" },
+      mode: "basic",
+      customSkillsRaw: "a-skill\nb-skill",
+    });
+  });
+
+  it("parses bare configs and rejects garbage", () => {
+    expect(
+      parseImportJson(JSON.stringify({ selections: { ui: ["tailwind"] } })),
+    ).toEqual({
+      selections: { ui: ["tailwind"] },
+      requirements: EMPTY_REQUIREMENTS,
+      mode: "standard",
+      customSkillsRaw: "",
+    });
+    expect(parseImportJson("not json")).toBeNull();
+    expect(parseImportJson("[1,2]")).toBeNull();
+    expect(parseImportJson("42")).toBeNull();
   });
 });
