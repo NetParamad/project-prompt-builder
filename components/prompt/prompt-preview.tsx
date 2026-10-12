@@ -66,10 +66,11 @@ export function PromptPreview() {
         </pre>
       )}
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-col gap-2">
         {editing ? (
           <>
             <Button
+              className="w-full"
               size="sm"
               onClick={() => {
                 setManualEdit(draft);
@@ -78,24 +79,24 @@ export function PromptPreview() {
             >
               Save edits
             </Button>
-            <Button size="sm" variant="outline" onClick={() => setEditing(false)}>
+            <Button className="w-full" size="sm" variant="outline" onClick={() => setEditing(false)}>
               Cancel
             </Button>
           </>
         ) : (
-          <Button size="sm" variant="outline" onClick={startEditing}>
+          <Button className="w-full" size="sm" variant="outline" onClick={startEditing}>
             Edit manually
           </Button>
         )}
         {edited && !editing && (
-          <Button size="sm" variant="outline" onClick={clearManualEdit}>
+          <Button className="w-full" size="sm" variant="outline" onClick={clearManualEdit}>
             Reset edits
           </Button>
         )}
-        <Button size="sm" onClick={handleCopy}>
+        <Button className="w-full" size="sm" onClick={handleCopy}>
           {copied ? "Copied!" : "Copy to clipboard"}
         </Button>
-        <Button size="sm" variant="outline" onClick={() => setConfirmingClear(true)}>
+        <Button className="w-full" size="sm" variant="outline" onClick={() => setConfirmingClear(true)}>
           Clear
         </Button>
       </div>
