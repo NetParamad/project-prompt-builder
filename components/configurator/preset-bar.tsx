@@ -22,7 +22,7 @@ export function PresetBar() {
 
   return (
     <section aria-label="Presets" className="flex flex-col gap-2">
-      <h2 className="text-sm font-semibold">Start from a preset</h2>
+      <h3 className="text-sm font-semibold">Start from a preset</h3>
       <div className="flex flex-wrap gap-2">
         {PRESETS.map((preset) => (
           <Button

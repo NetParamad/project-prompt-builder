@@ -54,7 +54,7 @@ export function RequirementsForm() {
 
   return (
     <section aria-label="Project requirements" className="flex flex-col gap-3">
-      <h2 className="text-sm font-semibold">Project Requirements</h2>
+      <h3 className="text-sm font-semibold">Project Requirements</h3>
       {FIELDS.map((field) => (
         <label key={field.key} className="flex flex-col gap-1 text-sm">
           <span className="font-medium">{field.label}</span>
