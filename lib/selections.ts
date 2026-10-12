@@ -7,3 +7,9 @@ export function has(sel: Selections, category: string, option: string): boolean 
 export function hasAny(sel: Selections, category: string, options: string[]): boolean {
   return options.some((o) => has(sel, category, o));
 }
+
+/** Backends sharing the Node.js runtime. */
+export const NODE_BACKENDS = ["nodejs", "express", "nestjs"];
+
+/** Backends needing their own runtime/service. */
+export const NON_NODE_BACKENDS = ["go", "laravel", "dotnet", "spring-boot"];

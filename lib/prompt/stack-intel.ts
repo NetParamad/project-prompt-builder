@@ -1,6 +1,6 @@
 /** Stack-aware integration notes derived from a Configuration's selections. */
 
-import { has, hasAny, type Selections } from "@/lib/selections";
+import { has, hasAny, NON_NODE_BACKENDS, type Selections } from "@/lib/selections";
 
 /**
  * Returns conditional paragraphs explaining how the chosen technologies fit
@@ -20,7 +20,7 @@ export function stackIntel(sel: Selections): string[] {
 
   if (
     frontend === "nextjs" &&
-    backends.some((b) => ["go", "laravel", "dotnet"].includes(b))
+    backends.some((b) => NON_NODE_BACKENDS.includes(b))
   ) {
     notes.push(
       "Architecture split: Next.js serves the frontend (App Router, server components where they add value), while the " +
@@ -29,7 +29,7 @@ export function stackIntel(sel: Selections): string[] {
     );
   }
 
-  if (deployments.includes("vercel") && hasAny(sel, "backend", ["go", "laravel", "dotnet"])) {
+  if (deployments.includes("vercel") && hasAny(sel, "backend", NON_NODE_BACKENDS)) {
     notes.push(
       "Deployment split: the frontend deploys to Vercel, but the non-Node backend cannot run on Vercel serverless functions — deploy it separately (Docker on a VPS or managed container service) and wire the frontend to its public URL via environment variables.",
     );

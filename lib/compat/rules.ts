@@ -1,5 +1,11 @@
 import type { ValidationIssue } from "@/lib/domain";
-import { has, hasAny, type Selections } from "@/lib/selections";
+import {
+  has,
+  hasAny,
+  NODE_BACKENDS,
+  NON_NODE_BACKENDS,
+  type Selections,
+} from "@/lib/selections";
 
 interface Rule {
   id: string;
@@ -8,9 +14,6 @@ interface Rule {
     level: ValidationIssue["level"];
   };
 }
-
-const NON_NODE_BACKENDS = ["go", "laravel", "dotnet"];
-const NODE_BACKENDS = ["nodejs", "express", "nestjs"];
 
 const RULES: Rule[] = [
   {
@@ -181,13 +184,26 @@ const RULES: Rule[] = [
     }),
   },
   {
+    id: "spring-no-java",
+    when: (sel) =>
+      has(sel, "backend", "spring-boot") &&
+      (sel["language"]?.length ?? 0) > 0 &&
+      !has(sel, "language", "java"),
+    issue: () => ({
+      level: "warn",
+      message: "Spring Boot is Java, but the Language is not Java.",
+      hint: "Set Language to Java — or drop Spring Boot for a backend matching the language.",
+      involved: ["backend", "language"],
+    }),
+  },
+  {
     id: "mixed-runtimes",
     when: (sel) =>
       hasAny(sel, "backend", NON_NODE_BACKENDS) &&
       hasAny(sel, "backend", NODE_BACKENDS),
     issue: () => ({
       level: "warn",
-      message: "Go/PHP/.NET mixed with Node in one Backend — that is two services, not one.",
+      message: "Mixed runtimes in one Backend — that is two services, not one.",
       hint: "Run each runtime as its own service behind a versioned API contract; share nothing except the contract.",
       involved: ["backend"],
     }),

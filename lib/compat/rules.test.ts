@@ -100,6 +100,18 @@ describe("evaluateRules", () => {
     ).not.toContain("ts-orm-no-runtime");
     expect(ids({ orm: ["prisma"] })).not.toContain("ts-orm-no-runtime");
   });
+
+  it("warns on spring boot without java, and mixes with node", () => {
+    expect(
+      ids({ backend: ["spring-boot"], language: ["typescript"] }),
+    ).toContain("spring-no-java");
+    expect(ids({ backend: ["spring-boot"], language: ["java"] })).not.toContain(
+      "spring-no-java",
+    );
+    expect(ids({ backend: ["spring-boot", "nodejs"] })).toContain(
+      "mixed-runtimes",
+    );
+  });
   it("returns nothing for a clean config", () => {
     expect(
       evaluateRules({

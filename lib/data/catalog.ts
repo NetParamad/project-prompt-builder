@@ -49,6 +49,7 @@ export const CATEGORIES: Category[] = [
       opt("backend", "nodejs", "Node.js", "Plain Node runtime service"),
       opt("backend", "express", "Express", "Minimal Node framework"),
       opt("backend", "nestjs", "NestJS", "Opinionated TypeScript framework"),
+      opt("backend", "spring-boot", "Spring Boot", "Opinionated Java framework"),
       opt("backend", "laravel", "Laravel", "PHP full-stack framework"),
       opt("backend", "dotnet", ".NET", "ASP.NET Core API"),
     ],
@@ -64,6 +65,7 @@ export const CATEGORIES: Category[] = [
       opt("language", "rust", "Rust", "Memory-safe systems language"),
       opt("language", "php", "PHP", "Server-rendered scripting"),
       opt("language", "csharp", "C#", ".NET language"),
+      opt("language", "java", "Java", "JVM enterprise language"),
     ],
   },
   {

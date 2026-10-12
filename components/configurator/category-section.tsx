@@ -12,7 +12,11 @@ interface CategorySectionProps {
 
 export function CategorySection({ category, selected, capped, onToggle }: CategorySectionProps) {
   return (
-    <section aria-label={category.title} className="flex animate-pane-in flex-col gap-2">
+    <section
+      id={`category-${category.id}`}
+      aria-label={category.title}
+      className="flex animate-pane-in scroll-mt-24 flex-col gap-2"
+    >
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-sm font-semibold">{category.title}</h2>
         <span className="rounded-full bg-zinc-100 px-2 py-0.5 text-[11px] font-medium text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300">

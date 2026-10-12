@@ -105,4 +105,9 @@ describe("buildPrompt", () => {
     const md = buildPrompt(config({ backend: ["express"] }));
     expect(md).toContain("Node.js runtime");
   });
+
+  it("splits next.js from a spring boot backend", () => {
+    const md = buildPrompt(config({ frontend: ["nextjs"], backend: ["spring-boot"] }));
+    expect(md).toContain("Architecture split");
+  });
 });
