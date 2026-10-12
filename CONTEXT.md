@@ -34,3 +34,11 @@ _Avoid_: Output text
 **ValidationIssue**:
 A warn/info finding about a Configuration (e.g. sqlc + MongoDB). Never blocks except the DB max-2 cap.
 _Avoid_: Error (nothing errors except over-cap)
+
+**Agent Skill**:
+A named agent capability (e.g. tdd, code-review) picked from the AI Agent Skills Category. Rendered as a `## Agent Skills` section (Standard/Production only), never in the Technology Stack list.
+_Avoid_: Plugin, tool
+
+**Custom Skill**:
+A free-text skill name typed by the user (one per line). Merged with picked Agent Skills in the prompt.
+_Avoid_: Manual skill

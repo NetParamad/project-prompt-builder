@@ -1,4 +1,4 @@
-import { CATEGORIES, optionName } from "@/lib/data/catalog";
+import { CATEGORIES, CATEGORY_MAP, optionName } from "@/lib/data/catalog";
 import type { ProjectConfiguration } from "@/lib/domain";
 import { stackIntel } from "@/lib/prompt/stack-intel";
 
@@ -50,7 +50,7 @@ export function buildPrompt(config: ProjectConfiguration): string {
   parts.push("", section("Project Overview", overview));
 
   const stackLines = CATEGORIES.filter(
-    (c) => c.id !== "project-type",
+    (c) => c.id !== "project-type" && c.id !== "ai-skills",
   ).map((c) => `- ${c.title}: ${picked(sel, c.id)}`);
   const intel = stackIntel(sel);
   parts.push(
@@ -87,6 +87,35 @@ export function buildPrompt(config: ProjectConfiguration): string {
     .filter(Boolean)
     .join("\n");
   parts.push("", section("Requirements", reqLines));
+
+  if (standard) {
+    const pickedSkills = sel["ai-skills"] ?? [];
+    const extraSkills = config.customSkills.filter(
+      (name) => !pickedSkills.includes(name),
+    );
+    if (pickedSkills.length > 0 || extraSkills.length > 0) {
+      const skillOptions =
+        CATEGORY_MAP["ai-skills"]?.options ?? [];
+      const bullets = [
+        ...pickedSkills.map((id) => {
+          const found = skillOptions.find((o) => o.id === id);
+          return `- /${id}${found?.description ? ` — ${found.description}` : ""}`;
+        }),
+        ...extraSkills.map((name) => `- /${name}`),
+      ];
+      parts.push(
+        "",
+        section(
+          "Agent Skills",
+          [
+            "Use the following agent skills when their trigger matches the work at hand — invoke the skill instead of doing the corresponding work by hand.",
+            "",
+            ...bullets,
+          ].join("\n"),
+        ),
+      );
+    }
+  }
 
   if (standard) {
     parts.push(

@@ -5,6 +5,7 @@ import { buildPrompt } from "@/lib/prompt/builder";
 function config(
   selections: Record<string, string[]>,
   mode: ProjectConfiguration["mode"] = "standard",
+  customSkills: string[] = [],
 ): ProjectConfiguration {
   return {
     selections,
@@ -15,6 +16,7 @@ function config(
       mainFeatures: "Orders\nPayments",
     },
     mode,
+    customSkills,
   };
 }
 
@@ -61,5 +63,28 @@ describe("buildPrompt", () => {
   it("handles an empty configuration without crashing", () => {
     const md = buildPrompt(config({}, "basic"));
     expect(md).toContain("You are a senior full-stack software engineer.");
+  });
+
+  it("renders picked skills as an Agent Skills section in standard mode", () => {
+    const md = buildPrompt(config({ "ai-skills": ["tdd", "code-review"] }));
+    expect(md).toContain("## Agent Skills");
+    expect(md).toContain("/tdd");
+    expect(md).toContain("/code-review");
+    expect(md).not.toContain("- AI Agent Skills:");
+  });
+
+  it("omits the Agent Skills section in basic mode", () => {
+    const md = buildPrompt(
+      config({ "ai-skills": ["tdd"] }, "basic"),
+    );
+    expect(md).not.toContain("## Agent Skills");
+  });
+
+  it("merges custom skills and dedupes picked ones", () => {
+    const md = buildPrompt(
+      config({ "ai-skills": ["tdd"] }, "standard", ["tdd", "my-skill"]),
+    );
+    expect(md).toContain("/my-skill");
+    expect(md.match(/\/tdd/g)?.length).toBe(1);
   });
 });

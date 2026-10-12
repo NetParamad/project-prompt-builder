@@ -45,6 +45,7 @@ export interface ProjectConfiguration {
   selections: Record<string, string[]>;
   requirements: ProjectRequirements;
   mode: PromptMode;
+  customSkills: string[];
 }
 
 export type ValidationLevel = "warn" | "info";
@@ -62,7 +63,6 @@ export interface GeneratedPrompt {
   warnings: ValidationIssue[];
   edited: boolean;
 }
-
 export const EMPTY_REQUIREMENTS: ProjectRequirements = {
   projectName: "",
   description: "",
@@ -72,3 +72,11 @@ export const EMPTY_REQUIREMENTS: ProjectRequirements = {
   technicalRequirements: "",
   additionalInstructions: "",
 };
+
+/** Parses free-text custom skills: one per line, leading slashes stripped. */
+export function parseCustomSkills(raw: string): string[] {
+  return raw
+    .split("\n")
+    .map((line) => line.trim().replace(/^\/+/, ""))
+    .filter(Boolean);
+}

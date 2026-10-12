@@ -17,10 +17,12 @@ interface ConfigState {
   selections: Record<string, string[]>;
   requirements: ProjectRequirements;
   mode: PromptMode;
+  customSkillsRaw: string;
   manualEdit: string | null;
   toggleOption: (categoryId: string, optionId: string) => ToggleResult;
   setRequirement: (key: RequirementKey, value: string) => void;
   setMode: (mode: PromptMode) => void;
+  setCustomSkillsRaw: (value: string) => void;
   applyPreset: (preset: Preset) => void;
   setManualEdit: (text: string) => void;
   clearManualEdit: () => void;
@@ -29,7 +31,7 @@ interface ConfigState {
 
 const initialSelections = (): Record<string, string[]> => ({});
 
-type PersistedConfig = Pick<ConfigState, "selections" | "requirements" | "mode">;
+type PersistedConfig = Pick<ConfigState, "selections" | "requirements" | "mode" | "customSkillsRaw">;
 
 export const useConfig = create<ConfigState>()(
   persist(
@@ -37,6 +39,7 @@ export const useConfig = create<ConfigState>()(
       selections: initialSelections(),
       requirements: { ...EMPTY_REQUIREMENTS },
       mode: "standard",
+      customSkillsRaw: "",
       manualEdit: null,
 
       toggleOption: (categoryId, optionId) => {
@@ -87,6 +90,9 @@ export const useConfig = create<ConfigState>()(
 
       setMode: (mode) => set({ mode, manualEdit: null }),
 
+      setCustomSkillsRaw: (value) =>
+        set({ customSkillsRaw: value, manualEdit: null }),
+
       applyPreset: (preset) =>
         set((s) => {
           const merged: Record<string, string[]> = { ...s.selections };
@@ -108,6 +114,7 @@ export const useConfig = create<ConfigState>()(
           selections: initialSelections(),
           requirements: { ...EMPTY_REQUIREMENTS },
           mode: "standard",
+          customSkillsRaw: "",
           manualEdit: null,
         }),
     }),
@@ -115,6 +122,7 @@ export const useConfig = create<ConfigState>()(
         selections: { ...s.selections },
         requirements: { ...s.requirements },
         mode: s.mode,
+        customSkillsRaw: s.customSkillsRaw,
       }),
     },
   ),

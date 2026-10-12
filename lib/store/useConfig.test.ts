@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
+import { parseCustomSkills } from "@/lib/domain";
 import { useConfig } from "@/lib/store/useConfig";
 
 beforeEach(() => {
@@ -64,10 +65,31 @@ describe("requirements and mode", () => {
     s.toggleOption("frontend", "nextjs");
     s.setRequirement("projectName", "x");
     s.setMode("production");
+    s.setCustomSkillsRaw("my-skill");
     s.clearAll();
     const after = useConfig.getState();
     expect(after.selections).toEqual({});
     expect(after.requirements.projectName).toBe("");
     expect(after.mode).toBe("standard");
+    expect(after.customSkillsRaw).toBe("");
+  });
+});
+
+describe("custom skills", () => {
+  it("stores raw text and parses one skill per line", () => {
+    useConfig.getState().setCustomSkillsRaw("/tdd\nmy-team-skill\n");
+    expect(useConfig.getState().customSkillsRaw).toBe("/tdd\nmy-team-skill\n");
+    expect(
+      parseCustomSkills(useConfig.getState().customSkillsRaw),
+    ).toEqual(["tdd", "my-team-skill"]);
+  });
+
+  it("toggles ai-skills like any multi-select category", () => {
+    useConfig.getState().toggleOption("ai-skills", "tdd");
+    useConfig.getState().toggleOption("ai-skills", "code-review");
+    expect(useConfig.getState().selections["ai-skills"]).toEqual([
+      "tdd",
+      "code-review",
+    ]);
   });
 });

@@ -3,6 +3,7 @@
 import * as React from "react";
 import { copyText } from "@/lib/export/clipboard";
 import { downloadFile, slugify } from "@/lib/export/files";
+import { parseCustomSkills } from "@/lib/domain";
 import { useGeneratedPrompt, wordCount } from "@/lib/prompt/useGeneratedPrompt";
 import { useConfig } from "@/lib/store/useConfig";
 import { evaluateRules } from "@/lib/compat/rules";
@@ -63,6 +64,7 @@ export function PromptPreview() {
             selections: state.selections,
             requirements: state.requirements,
             mode: state.mode,
+            customSkills: parseCustomSkills(state.customSkillsRaw),
           },
           markdown,
           warnings: issues,

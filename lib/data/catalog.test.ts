@@ -19,6 +19,7 @@ describe("catalog", () => {
       "testing",
       "deployment",
       "architecture",
+      "ai-skills",
       "package-manager",
     ]) {
       expect(ids).toContain(expected);
