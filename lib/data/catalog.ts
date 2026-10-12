@@ -76,6 +76,7 @@ export const CATEGORIES: Category[] = [
     options: [
       opt("database", "postgresql", "PostgreSQL", "Relational, default pick"),
       opt("database", "mysql", "MySQL", "Relational, classic hosting"),
+      opt("database", "sqlserver", "SQL Server", "Microsoft relational DB"),
       opt("database", "mongodb", "MongoDB", "Document store"),
       opt("database", "sqlite", "SQLite", "Embedded file DB"),
     ],

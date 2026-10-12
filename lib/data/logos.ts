@@ -28,6 +28,7 @@ export const LOGO_TITLES: Record<string, string> = {
   java: "Java",
   postgresql: "PostgreSQL",
   mysql: "MySQL",
+  sqlserver: "Microsoft SQL Server",
   mongodb: "MongoDB",
   sqlite: "SQLite",
   drizzle: "Drizzle ORM",
