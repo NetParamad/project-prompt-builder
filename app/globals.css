@@ -26,3 +26,56 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Subtle UI motion — decorative only, never carries meaning. */
+@keyframes card-pop {
+  0% {
+    transform: scale(0.97);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes check-in {
+  0% {
+    transform: scale(0);
+  }
+  60% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes pane-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate-card-pop {
+  animation: card-pop 160ms ease-out;
+}
+
+.animate-check-in {
+  animation: check-in 200ms ease-out;
+}
+
+.animate-pane-in {
+  animation: pane-in 200ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-card-pop,
+  .animate-check-in,
+  .animate-pane-in {
+    animation: none;
+  }
+}

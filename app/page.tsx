@@ -39,7 +39,7 @@ export default function Home() {
             <span className="rounded-md bg-zinc-900 px-2 py-1 font-mono text-xs font-bold text-zinc-50 dark:bg-zinc-50 dark:text-zinc-900">
               PPB
             </span>
-            <span className="text-sm font-semibold">Project Prompt Builder</span>
+            <h1 className="text-sm font-semibold">Project Prompt Builder</h1>
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
@@ -69,7 +69,7 @@ export default function Home() {
       <main className="mx-auto grid w-full max-w-6xl flex-1 gap-4 p-4 md:grid-cols-[1fr_1fr]">
         <section
           aria-label="Configuration"
-          className={cn(pane === "configure" ? "block" : "hidden", "md:block")}
+          className={cn(pane === "configure" ? "block" : "hidden", "md:block animate-pane-in")}
         >
           <Card>
             <CardHeader>
@@ -83,7 +83,7 @@ export default function Home() {
 
         <section
           aria-label="Generated prompt"
-          className={cn(pane === "prompt" ? "block" : "hidden", "md:block")}
+          className={cn(pane === "prompt" ? "block" : "hidden", "md:block animate-pane-in")}
         >
           <Card className="md:sticky md:top-20">
             <CardHeader>
