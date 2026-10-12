@@ -20,10 +20,33 @@ export function ConfirmDialog({
   onConfirm,
   onClose,
 }: ConfirmDialogProps) {
+  const panelRef = React.useRef<HTMLDivElement>(null);
+
   React.useEffect(() => {
     if (!open) return;
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+      if (event.key === "Escape") {
+        onClose();
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const panel = panelRef.current;
+      if (!panel) return;
+      const focusable = Array.from(
+        panel.querySelectorAll<HTMLElement>(
+          'button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])',
+        ),
+      ).filter((el) => !el.hasAttribute("disabled"));
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
     document.addEventListener("keydown", onKeyDown);
     const previousOverflow = document.body.style.overflow;
@@ -44,6 +67,7 @@ export function ConfirmDialog({
         onClick={onClose}
       />
       <div
+        ref={panelRef}
         role="alertdialog"
         aria-modal="true"
         aria-label={title}
@@ -52,10 +76,10 @@ export function ConfirmDialog({
         <h2 className="text-sm font-semibold">{title}</h2>
         <p className="text-sm text-zinc-500 dark:text-zinc-400">{description}</p>
         <div className="mt-2 flex justify-end gap-2">
-          <Button size="sm" variant="outline" onClick={onClose}>
+          <Button size="sm" variant="outline" onClick={onClose} autoFocus>
             Cancel
           </Button>
-          <Button size="sm" onClick={onConfirm} autoFocus>
+          <Button size="sm" onClick={onConfirm}>
             {confirmLabel}
           </Button>
         </div>

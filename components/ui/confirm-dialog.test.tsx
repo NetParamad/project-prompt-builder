@@ -46,8 +46,7 @@ describe("ConfirmDialog", () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it("closes on Escape and backdrop click", async () => {
-    const user = userEvent.setup();
+  it("closes on Escape and backdrop click", async () => {    const user = userEvent.setup();
     const onClose = vi.fn();
     const { container } = openDialog({ onClose });
 
@@ -57,5 +56,19 @@ describe("ConfirmDialog", () => {
     if (!backdrop) throw new Error("backdrop missing");
     await user.click(backdrop);
     expect(onClose).toHaveBeenCalledTimes(2);
+  });
+
+  it("focuses the safe action first and traps Tab inside", async () => {
+    const user = userEvent.setup();
+    openDialog();
+
+    const cancel = screen.getByRole("button", { name: "Cancel" });
+    const confirm = screen.getByRole("button", { name: "Clear everything" });
+    expect(cancel).toHaveFocus();
+
+    await user.tab();
+    expect(confirm).toHaveFocus();
+    await user.tab();
+    expect(cancel).toHaveFocus();
   });
 });

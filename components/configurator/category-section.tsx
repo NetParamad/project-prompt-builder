@@ -35,7 +35,7 @@ export function CategorySection({ category, selected, capped, onToggle }: Catego
         ))}
       </div>
       {capped && (
-        <p role="status" className="text-xs text-amber-600 dark:text-amber-400">
+        <p role="status" className="text-xs text-amber-800 dark:text-amber-400">
           {category.title} is capped at {category.maxSelections} — deselect one
           to pick another.
         </p>
