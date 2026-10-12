@@ -23,7 +23,7 @@ export function ValidationList() {
         <li
           key={issue.ruleId}
           className={cn(
-            "rounded-md border p-2.5 text-xs",
+            "animate-pane-in rounded-md border p-2.5 text-xs",
             issue.level === "warn"
               ? "border-amber-300 bg-amber-50 dark:border-amber-800 dark:bg-amber-950/40"
               : "border-sky-300 bg-sky-50 dark:border-sky-800 dark:bg-sky-950/40",

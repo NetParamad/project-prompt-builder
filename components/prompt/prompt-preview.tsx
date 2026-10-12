@@ -110,7 +110,7 @@ export function PromptPreview() {
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
           rows={20}
-          className="max-h-[60vh] rounded-md border border-zinc-300 bg-white p-4 font-mono text-xs leading-relaxed outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900"
+          className="max-h-[60vh] rounded-md border border-zinc-300 bg-white p-4 font-mono text-xs leading-relaxed outline-none transition-colors focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900"
         />
       ) : (
         <pre

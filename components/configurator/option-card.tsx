@@ -17,7 +17,7 @@ export function OptionCard({ name, description, selected, onToggle }: OptionCard
       onClick={onToggle}
       aria-pressed={selected}
       className={cn(
-        "relative flex flex-col items-start gap-0.5 rounded-lg border p-3 text-left text-sm transition-colors outline-none focus-visible:ring-2 focus-visible:ring-zinc-500",
+        "relative flex flex-col items-start gap-0.5 rounded-lg border p-3 text-left text-sm transition-all duration-150 outline-none hover:-translate-y-px hover:shadow-sm focus-visible:ring-2 focus-visible:ring-zinc-500 active:scale-[0.98]",
         selected && "animate-card-pop",
         selected
           ? "border-zinc-900 bg-zinc-900 text-zinc-50 dark:border-zinc-50 dark:bg-zinc-50 dark:text-zinc-900"
