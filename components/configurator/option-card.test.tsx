@@ -11,6 +11,13 @@ describe("OptionCard", () => {
     expect(container.querySelector('img[src*="react.svg"]')).not.toBeNull();
   });
 
+  it("inverts near-black logos on dark backgrounds", () => {
+    const { container } = render(
+      <OptionCard id="nextjs" name="Next.js" selected={false} onToggle={() => {}} />,
+    );
+    expect(container.querySelector(".dark\\:invert")).not.toBeNull();
+  });
+
   it("falls back to a letter tile for unmapped options", () => {
     const { container } = render(
       <OptionCard id="pos" name="POS" selected={false} onToggle={() => {}} />,

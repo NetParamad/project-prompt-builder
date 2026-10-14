@@ -110,4 +110,24 @@ describe("buildPrompt", () => {
     const md = buildPrompt(config({ frontend: ["nextjs"], backend: ["spring-boot"] }));
     expect(md).toContain("Architecture split");
   });
+
+  it("omits empty categories instead of printing placeholders", () => {
+    const md = buildPrompt(config({ frontend: ["react"] }, "production"));
+    expect(md).not.toContain("- Backend:");
+    expect(md).not.toContain("- Database:");
+    expect(md).not.toContain("—");
+    expect(md).toContain("- Frontend: React");
+  });
+
+  it("explains an empty stack and plain testing when nothing is picked", () => {
+    const md = buildPrompt(config({}, "standard"));
+    expect(md).toContain("No technologies selected yet");
+    expect(md).toContain("Cover business logic with unit tests.");
+  });
+
+  it("calls out full-stack next.js with no separate backend", () => {
+    const md = buildPrompt(config({ frontend: ["nextjs"], backend: ["nextjs"] }));
+    expect(md).toContain("Full-stack Next.js");
+    expect(md).not.toContain("Architecture split");
+  });
 });

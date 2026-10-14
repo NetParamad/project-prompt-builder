@@ -50,25 +50,32 @@ export function buildPrompt(config: ProjectConfiguration): string {
   parts.push("", section("Project Overview", overview));
 
   const stackLines = CATEGORIES.filter(
-    (c) => c.id !== "project-type" && c.id !== "ai-skills",
+    (c) =>
+      c.id !== "project-type" &&
+      c.id !== "ai-skills" &&
+      (sel[c.id]?.length ?? 0) > 0,
   ).map((c) => `- ${c.title}: ${picked(sel, c.id)}`);
   const intel = stackIntel(sel);
   const loadTools = picked(sel, "load-testing");
+  const stackBody =
+    stackLines.length > 0
+      ? stackLines.join("\n")
+      : "(No technologies selected yet — pick a stack and it will be described here.)";
   parts.push(
     "",
     section(
       "Technology Stack",
-      [...stackLines, ...(intel.length > 0 ? ["", ...intel.map((n) => `> ${n}`)] : [])].join("\n"),
+      [...[stackBody], ...(intel.length > 0 ? ["", ...intel.map((n) => `> ${n}`)] : [])].join("\n"),
     ),
   );
 
   if (standard) {
-    const arch = picked(sel, "architecture");
+    const archId = sel["architecture"]?.[0];
     parts.push(
       "",
       section(
         "Architecture",
-        `Follow ${arch === "—" ? "a clean, layered architecture" : arch}. Separate transport, business logic, and data access; keep framework code at the edges and business rules framework-free.`,
+        `Follow ${archId ? optionName("architecture", archId) : "a clean, layered architecture"}. Separate transport, business logic, and data access; keep framework code at the edges and business rules framework-free.`,
       ),
     );
   }
@@ -119,6 +126,8 @@ export function buildPrompt(config: ProjectConfiguration): string {
   }
 
   if (standard) {
+    const testingTools = sel["testing"] ?? [];
+    const deploymentTools = sel["deployment"] ?? [];
     parts.push(
       "",
       section(
@@ -134,7 +143,9 @@ export function buildPrompt(config: ProjectConfiguration): string {
       section(
         "Testing",
         [
-          `- Cover business logic with unit tests (${picked(sel, "testing")}).`,
+          testingTools.length > 0
+            ? `- Cover business logic with unit tests (${testingTools.map((id) => optionName("testing", id)).join(", ")}).`
+            : "- Cover business logic with unit tests.",
           "- Add at least one end-to-end happy path for the core user flow.",
           ...(loadTools === "—"
             ? []
@@ -145,12 +156,13 @@ export function buildPrompt(config: ProjectConfiguration): string {
       "",
       section(
         "Deployment",
-        `- Provide a reproducible deployment (${picked(sel, "deployment")}) with environment-based configuration.\n- Document required environment variables and secrets; never commit secrets.`,
+        `- Provide a reproducible deployment${deploymentTools.length > 0 ? ` (${deploymentTools.map((id) => optionName("deployment", id)).join(", ")})` : ""} with environment-based configuration.\n- Document required environment variables and secrets; never commit secrets.`,
       ),
     );
   }
 
   if (production) {
+    const validationId = sel["validation"]?.[0];
     parts.push(
       "",
       section(
@@ -160,7 +172,7 @@ export function buildPrompt(config: ProjectConfiguration): string {
       "",
       section(
         "Validation & Error Handling",
-        `- Validate with ${picked(sel, "validation")} at API boundaries and re-validate at the service layer.\n- Return typed errors with stable codes; map them to correct HTTP/gRPC statuses.\n- Never leak internals (stack traces, SQL) to clients; log them server-side with correlation IDs.`,
+        `- Validate with ${validationId ? optionName("validation", validationId) : "a schema validator"} at API boundaries and re-validate at the service layer.\n- Return typed errors with stable codes; map them to correct HTTP/gRPC statuses.\n- Never leak internals (stack traces, SQL) to clients; log them server-side with correlation IDs.`,
       ),
       "",
       section(

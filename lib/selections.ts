@@ -9,7 +9,7 @@ export function hasAny(sel: Selections, category: string, options: string[]): bo
 }
 
 /** Backends sharing the Node.js runtime. */
-export const NODE_BACKENDS = ["nodejs", "express", "nestjs"];
+export const NODE_BACKENDS = ["nodejs", "express", "nestjs", "nextjs"];
 
 /** Backends needing their own runtime/service. */
 export const NON_NODE_BACKENDS = ["go", "laravel", "dotnet", "spring-boot"];

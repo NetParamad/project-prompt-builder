@@ -112,6 +112,18 @@ describe("evaluateRules", () => {
       "mixed-runtimes",
     );
   });
+
+  it("treats a next.js backend as a node runtime", () => {
+    expect(ids({ auth: ["better-auth"], backend: ["nextjs"] })).not.toContain(
+      "betterauth-go",
+    );
+    expect(ids({ orm: ["prisma"], backend: ["nextjs"] })).not.toContain(
+      "ts-orm-no-runtime",
+    );
+    expect(ids({ api: ["trpc"], backend: ["nextjs"] })).not.toContain(
+      "trpc-non-ts",
+    );
+  });
   it("returns nothing for a clean config", () => {
     expect(
       evaluateRules({

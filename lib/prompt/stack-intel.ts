@@ -12,20 +12,28 @@ export function stackIntel(sel: Selections): string[] {
 
   const frontend = sel["frontend"]?.[0];
   const backends = sel["backend"] ?? [];
+  const apiBackends = backends.filter((b) => NON_NODE_BACKENDS.includes(b));
   const databases = sel["database"] ?? [];
   const orm = sel["orm"]?.[0];
   const auth = sel["auth"]?.[0];
   const api = sel["api"]?.[0];
   const deployments = sel["deployment"] ?? [];
 
-  if (
-    frontend === "nextjs" &&
-    backends.some((b) => NON_NODE_BACKENDS.includes(b))
-  ) {
+  if (frontend === "nextjs" && apiBackends.length > 0) {
     notes.push(
       "Architecture split: Next.js serves the frontend (App Router, server components where they add value), while the " +
-        backends.join("/") +
+        apiBackends.join("/") +
         " service owns business logic behind a versioned API. Keep a typed client contract between them and do not leak backend internals into the frontend.",
+    );
+  }
+
+  if (
+    frontend === "nextjs" &&
+    has(sel, "backend", "nextjs") &&
+    apiBackends.length === 0
+  ) {
+    notes.push(
+      "Full-stack Next.js: API routes and server actions live in the same app — no separate backend service, one deployment, shared types end to end.",
     );
   }
 
@@ -44,7 +52,8 @@ export function stackIntel(sel: Selections): string[] {
     );
   }
 
-  if (auth === "supabase-auth" && !has(sel, "database", "postgresql")) {    notes.push(
+  if (auth === "supabase-auth" && !has(sel, "database", "postgresql")) {
+    notes.push(
       "Supabase Auth ships with Postgres — prefer PostgreSQL as the database unless you have a reason to run auth and data on different stores.",
     );
   }

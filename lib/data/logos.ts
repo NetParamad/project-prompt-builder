@@ -92,3 +92,13 @@ export const LOGO_DARK_VARIANTS: ReadonlySet<string> = new Set<string>([
   "vercel",
   /* END:logo-dark */
 ]);
+
+/**
+ * Near-monochrome dark logos (no dark variant exists) that need inverting on
+ * dark backgrounds to stay visible. Hand-maintained — check new logos with:
+ * `grep -o 'fill="[^"]*"' public/logos/<id>.svg`.
+ */
+export const LOGO_INVERT_DARK: ReadonlySet<string> = new Set<string>([
+  "nextjs",
+  "valibot",
+]);

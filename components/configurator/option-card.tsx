@@ -3,7 +3,7 @@
 import * as React from "react";
 import { Check } from "lucide-react";
 import Image from "next/image";
-import { LOGO_DARK_VARIANTS, LOGO_TITLES } from "@/lib/data/logos";
+import { LOGO_DARK_VARIANTS, LOGO_INVERT_DARK, LOGO_TITLES } from "@/lib/data/logos";
 import { cn } from "@/lib/utils";
 
 interface OptionCardProps {
@@ -18,6 +18,7 @@ function OptionLogo({ id, name }: { id: string; name: string }) {
   const [failed, setFailed] = React.useState(false);
   const hasLogo = !failed && id in LOGO_TITLES;
   const hasDark = LOGO_DARK_VARIANTS.has(id);
+  const invertDark = LOGO_INVERT_DARK.has(id);
 
   if (!hasLogo) {
     return (
@@ -38,7 +39,7 @@ function OptionLogo({ id, name }: { id: string; name: string }) {
         width={20}
         height={20}
         onError={() => setFailed(true)}
-        className={cn("size-5", hasDark && "dark:hidden")}
+        className={cn("size-5", hasDark && "dark:hidden", invertDark && "dark:invert")}
       />
       {hasDark && (
         <Image
